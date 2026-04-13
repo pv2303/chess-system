@@ -30,4 +30,14 @@ public class Board {
     public void setCols(int cols) {
         this.cols = cols;
     }
+
+    // pegando a peça por localização row-col
+    public Piece piece(int row, int col) {
+        return pieces[row][col];
+    }
+
+    // pegando a peça por position
+    public Piece piece(Position pos) {
+        return pieces[pos.getRow()][pos.getCol()];
+    }
 }
