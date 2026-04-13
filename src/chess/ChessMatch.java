@@ -1,6 +1,9 @@
 package chess;
 
 import boardgame.Board;
+import boardgame.Position;
+import chess.pieces.King;
+import chess.pieces.Rook;
 
 // coração do sistema de xadrez com as regras e afins
 public class ChessMatch {
@@ -11,6 +14,7 @@ public class ChessMatch {
     // uma partida de xadrez tem que saber quantas linhas e colunas
     public ChessMatch() {
         board = new Board(8, 8);
+        initialSetup();
     }
 
     // Tem que retornar uma matriz de peças de xadrez
@@ -23,5 +27,12 @@ public class ChessMatch {
             }
         }
         return mat;
+    }
+
+    private void initialSetup() {
+        // Testando o placePiece
+        board.placePiece(new Rook(board, Color.WHITE), new Position(2, 1));
+        board.placePiece(new King(board, Color.WHITE), new Position(0, 4));
+        board.placePiece(new King(board, Color.WHITE), new Position(7, 4));
     }
 }

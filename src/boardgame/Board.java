@@ -40,4 +40,12 @@ public class Board {
     public Piece piece(Position pos) {
         return pieces[pos.getRow()][pos.getCol()];
     }
+
+    public void placePiece(Piece piece, Position pos) {
+        // atribuir a peça à uma posição
+        pieces[pos.getRow()][pos.getCol()] = piece;
+        piece.position = pos;
+        // PS: pode ser acessada diretamente pois está em boardgame, isto é,
+        // no mesmo pacote que Board, respeitando sua classificação protected
+    }
 }
