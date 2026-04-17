@@ -54,6 +54,21 @@ public class Board {
         // no mesmo pacote que Board, respeitando sua classificação protected
     }
 
+    public Piece removePiece(Position pos) {
+        if (!positionExist(pos)) {
+            throw new BoardException("Position is not on the board");
+        }
+
+        if (piece(pos) == null) {
+            return null;
+        }
+        Piece aux = piece(pos);
+        aux.position = null; // ou seja ela foi retirada do tabuleiro
+        pieces[pos.getRow()][pos.getCol()] = null;
+        
+        return aux;
+    }
+
     private boolean positionExists(int row, int col) {
         return row >= 0 && row <= rows && col >= 0 && col < cols;
     }
