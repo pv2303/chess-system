@@ -26,6 +26,7 @@ public class UI {
     public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
     public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    public static final String ANSI_DARK_PURPLE_BACKGROUND = "\u001b[48;5;53m";
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
 
@@ -51,7 +52,19 @@ public class UI {
             IO.print((8-i) + " ");
             // assume matriz quadrada (8x8)
             for (int j = 0; j < pieces.length; j++) {
-                printPiece(pieces[i][j]);
+                printPiece(pieces[i][j], false);
+            }
+            IO.println();
+        }
+        IO.println("  a b c d e f g h");
+    }
+
+    public static void printBoard(ChessPiece[][] pieces, boolean[][]  possibleMoves) {
+        for (int i = 0; i < pieces.length; i++) {
+            IO.print((8-i) + " ");
+            // assume matriz quadrada (8x8)
+            for (int j = 0; j < pieces.length; j++) {
+                printPiece(pieces[i][j], possibleMoves[i][j]);
             }
             IO.println();
         }
@@ -59,9 +72,12 @@ public class UI {
     }
 
     // imprimi uma única peça
-    private static void printPiece(ChessPiece piece) {
+    private static void printPiece(ChessPiece piece, boolean background) {
+        if (background) {
+            System.out.print(ANSI_DARK_PURPLE_BACKGROUND);
+        }
         if (piece == null) {
-            IO.print("-");
+            IO.print("-" + ANSI_RESET);
         }
         else {
             if (piece.getColor() == Color.WHITE) {
