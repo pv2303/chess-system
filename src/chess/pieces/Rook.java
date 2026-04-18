@@ -51,7 +51,7 @@ public class Rook extends ChessPiece {
         // enquanto a posição p existir e não houver peças: marque como verdadeira
         while (getBoard().positionExist(p) && !getBoard().thereIsAPiece(p)) {
             mat[p.getRow()][p.getCol()] = true;
-            p.setCol(p.getCol() - 1);
+            p.setCol(p.getCol() + 1);
         }
         // Se chegar e tiver peça, marca como possível também
         if (getBoard().positionExist(p) && isThereOpponentPiece(p)) {
