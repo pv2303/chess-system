@@ -4,6 +4,7 @@ import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
 import chess.pieces.King;
+import chess.pieces.Pawn;
 import chess.pieces.Rook;
 
 import java.util.ArrayList;
@@ -179,14 +180,14 @@ public class ChessMatch {
         for (Piece p : list) {
             boolean[][] possibleMoves = p.possibleMoves();
             for (int i=0; i<board.getRows(); i++) {
-                for (int j=0; i<board.getCols(); i++) {
+                for (int j=0; j<board.getCols(); j++) {
                     if (possibleMoves[i][j]) {
                         Position source = ((ChessPiece) p).getChessPosition().toPosition();
                         Position target = new Position(i, j);
                         Piece capturedPiece = makeMove(source, target);
-                        boolean testCheck = testCheck(color);
+                        boolean stillCheck = testCheck(color);
                         undoMove(source, target, capturedPiece);
-                        if (!testCheck) {
+                        if (!stillCheck) {
                             return false;
                         }
                     }
@@ -202,13 +203,24 @@ public class ChessMatch {
     }
 
     private void initialSetup() {
-        // Testando o placePiece
-        placeNewPiece('h', 7, new Rook(board, Color.WHITE));
-        placeNewPiece('d', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 1, new King(board, Color.WHITE));
+        // Placing pieces
+        for (char c = 'a'; c <= 'h'; c++) {
+            // Rooks
+            if (c == 'a' || c == 'h') {
+                placeNewPiece(c, 8, new Rook(board, Color.BLACK));
+                placeNewPiece(c, 1, new Rook(board, Color.WHITE));
+            }
 
-        placeNewPiece('b', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('a', 8, new King(board, Color.BLACK));
+            // Kings
+            if (c == 'e') {
+                placeNewPiece(c, 8, new King(board, Color.BLACK));
+                placeNewPiece(c, 1, new King(board, Color.WHITE));
+            }
+
+            // Pawns
+            placeNewPiece(c, 7, new Pawn(board, Color.BLACK));
+            placeNewPiece(c, 2, new Pawn(board, Color.WHITE));
+        }
     }
 
     public boolean isCheck() {
