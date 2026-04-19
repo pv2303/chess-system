@@ -7,18 +7,21 @@ import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 
 public class Program {
     void main() {
 
         // board de xadrez tem 8 linhas e 8 colunas
         ChessMatch chessMatch = new ChessMatch();
+        List<ChessPiece> captured = new ArrayList<ChessPiece>();
 
         while (true) {
             try {
                 UI.clearScreen(); // limpa a tela a cada rodada
-                UI.printMatch(chessMatch);
+                UI.printMatch(chessMatch, captured);
                 System.out.println();
                 System.out.print("Source: ");
                 ChessPosition source = UI.readChessPosition(IO.readln());
@@ -34,6 +37,7 @@ public class Program {
 
                 ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
                 if (capturedPiece != null) {
+                    captured.add(capturedPiece);
                     System.out.println("Piece Captured: " + capturedPiece);
                 }
             }

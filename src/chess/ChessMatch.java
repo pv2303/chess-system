@@ -6,6 +6,9 @@ import boardgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // coração do sistema de xadrez com as regras e afins
 public class ChessMatch {
 
@@ -15,11 +18,16 @@ public class ChessMatch {
     // partida de xadrez tem que ter um tabuleiro
     private final Board board;
 
+    private List<Piece> piecesOnBoard;
+    private List<Piece> piecesCaptured;
+
     // uma partida de xadrez tem que saber quantas linhas e colunas
     public ChessMatch() {
         board = new Board(8, 8);
         turn = 1;
         currentPlayer = Color.WHITE;
+        piecesOnBoard = new ArrayList<>();
+        piecesCaptured = new ArrayList<>();
         initialSetup();
     }
 
@@ -89,6 +97,11 @@ public class ChessMatch {
         // Quando remove, o programa "gera" o objeto da peça
         Piece p = board.removePiece(source);
         Piece capturedPiece = board.removePiece(target);
+        // se houve captura, realoca nas listas
+        if (capturedPiece != null) {
+            piecesOnBoard.remove(capturedPiece);
+            piecesCaptured.add(capturedPiece);
+        }
         // bota a peça no target
         board.placePiece(p, target);
         return capturedPiece; // Se tiver 
@@ -96,6 +109,7 @@ public class ChessMatch {
 
     private void placeNewPiece(char col, int row, ChessPiece piece) {
         board.placePiece(piece, new ChessPosition(col, row).toPosition());
+        piecesOnBoard.add(piece);
     }
 
     private void initialSetup() {
