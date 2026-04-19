@@ -9,13 +9,26 @@ import chess.pieces.Rook;
 // coração do sistema de xadrez com as regras e afins
 public class ChessMatch {
 
+
+    private int turn;
+    private Color currentPlayer;
     // partida de xadrez tem que ter um tabuleiro
     private final Board board;
 
     // uma partida de xadrez tem que saber quantas linhas e colunas
     public ChessMatch() {
         board = new Board(8, 8);
+        turn = 1;
+        currentPlayer = Color.WHITE;
         initialSetup();
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public Color getCurrentPlayer() {
+        return currentPlayer;
     }
 
     // Tem que retornar uma matriz de peças de xadrez
@@ -42,12 +55,17 @@ public class ChessMatch {
         validateSourcePosition(source);
         validateTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
+        nextTurn();
         return (ChessPiece) capturedPiece;
     }
 
     private void validateSourcePosition(Position pos) {
         if (!board.thereIsAPiece(pos)) {
             throw new ChessException("There is no piece on source position");
+        }
+        // Validar se o jogador atual ta movendo a peça dele
+        if (currentPlayer != ((ChessPiece)(board.piece(pos))).getColor()) {
+            throw new ChessException("The chosen piece is not yours");
         }
         // validação de movimentos possíveis
         if (!board.piece(pos).isThereAnyPossibleMove()){
@@ -60,6 +78,11 @@ public class ChessMatch {
         if (!board.piece(source).possibleMove(target)) {
             throw new ChessException("The chosen piece can't move to target position");
         }
+    }
+
+    private void nextTurn() {
+        turn++;
+        currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
 
     private Piece makeMove(Position source, Position target) {

@@ -18,7 +18,7 @@ public class Program {
         while (true) {
             try {
                 UI.clearScreen(); // limpa a tela a cada rodada
-                UI.printBoard(chessMatch.getPieces());
+                UI.printMatch(chessMatch);
                 System.out.println();
                 System.out.print("Source: ");
                 ChessPosition source = UI.readChessPosition(IO.readln());
