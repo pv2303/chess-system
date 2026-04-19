@@ -7,6 +7,7 @@ import boardgame.Position;
 public abstract class ChessPiece extends Piece {
     // torná-la abstrata nos previne de adicionar os métodos
     private final Color color;
+    private int moveCount;
 
     public ChessPiece(Board board, Color color) {
         super(board);
@@ -17,6 +18,13 @@ public abstract class ChessPiece extends Piece {
         return color;
     }
 
+    protected void increaseMoveCount() {
+        moveCount++;
+    }
+
+    protected void decreaseMoveCount() {
+        moveCount--;
+    }
     public ChessPosition getChessPosition() {
         return ChessPosition.fromPosition(position);
     }
@@ -25,5 +33,9 @@ public abstract class ChessPiece extends Piece {
         ChessPiece p = (ChessPiece) getBoard().piece(pos);
         // testa se há uma peça e, caso haja, se esta é a de cor diferente.
         return p != null && p.getColor() != color;
+    }
+
+    public int getMoveCount() {
+        return moveCount;
     }
 }
