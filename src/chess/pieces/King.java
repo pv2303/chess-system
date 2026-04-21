@@ -16,11 +16,6 @@ public class King extends ChessPiece {
         return "K";
     }
 
-    private boolean canMove(Position pos) {
-        ChessPiece p = (ChessPiece) getBoard().piece(pos);
-        return p == null || p.getColor() != getColor();
-    }
-
     @Override
     public boolean[][] possibleMoves() {
         boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getCols()];
@@ -75,5 +70,10 @@ public class King extends ChessPiece {
             mat[p.getRow()][p.getCol()] = true;
         }
         return mat; // por enquanto retorna todas as posições como falso
+    }
+
+    private boolean canMove(Position pos) {
+        ChessPiece p = (ChessPiece) getBoard().piece(pos);
+        return p == null || p.getColor() != getColor();
     }
 }
