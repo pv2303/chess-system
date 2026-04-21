@@ -7,7 +7,6 @@ import chess.pieces.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 // coração do sistema de xadrez com as regras e afins
 public class ChessMatch {
@@ -69,7 +68,7 @@ public class ChessMatch {
         if (testCheck(currentPlayer)){
             undoMove(source, target, capturedPiece);
             throw new ChessException("You can't put yourself in check");
-        };
+        }
 
         // Testar se a jogada gerou xeque
         check = testCheck(opponent(currentPlayer));
@@ -219,6 +218,13 @@ public class ChessMatch {
             if (c == 'b' || c == 'g') {
                 placeNewPiece(c, 8, new Knight(board, Color.BLACK));
                 placeNewPiece(c, 1, new Knight(board, Color.WHITE));
+            }
+
+            // Queens
+            // Kings
+            if (c == 'd') {
+                placeNewPiece(c, 8, new Queen(board, Color.BLACK));
+                placeNewPiece(c, 1, new Queen(board, Color.WHITE));
             }
 
             // Kings
