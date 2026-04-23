@@ -18,6 +18,7 @@ public class ChessMatch {
     private final Board board;
     private boolean check;
     private boolean checkMate;
+    private ChessPiece enPassantVulnerable;
 
     // As peças não devem ser reatribuídas
     private final List<Piece> piecesOnBoard;
@@ -68,6 +69,18 @@ public class ChessMatch {
         if (testCheck(currentPlayer)){
             undoMove(source, target, capturedPiece);
             throw new ChessException("You can't put yourself in check");
+        }
+
+        ChessPiece movedPiece = (ChessPiece) board.piece(target);
+
+        // Verificação para En Passant
+        boolean isPawn = movedPiece instanceof Pawn;
+        boolean isTwoSteps = target.getRow() == source.getRow() - 2 || target.getRow() == source.getRow() + 2;
+        if (isPawn && isTwoSteps) {
+            enPassantVulnerable = movedPiece;
+        }
+        else {
+            enPassantVulnerable = null;
         }
 
         // Testar se a jogada gerou xeque
@@ -139,6 +152,25 @@ public class ChessMatch {
             board.placePiece(rook, targetR);
             rook.increaseMoveCount();
         }
+
+        // Mov. En Passant
+        //  A captura do En Passant ocorre quando o peão se move em diagonal, porém não há peça aonde ele parou
+        boolean enPassantCapture = p instanceof Pawn && source.getCol() != target.getCol() && capturedPiece == null;
+        if (enPassantCapture) {
+            Position pawnPosition;
+            // Se o peão que se moveu é branco, o peão que ele capturou estará abaixo dele
+            if (p.getColor() == Color.WHITE) {
+                pawnPosition = new Position(target.getRow() + 1, target.getCol());
+            }
+            // Se o peão que se moveu é preto, o peão que ele capturou estará acima dele
+            else {
+                pawnPosition = new Position(target.getRow() - 1, target.getCol());
+
+            }
+            capturedPiece = board.removePiece(pawnPosition);
+            piecesCaptured.add(capturedPiece);
+            piecesOnBoard.remove(capturedPiece);
+        }
         return capturedPiece; // Se tiver 
     }
 
@@ -147,11 +179,6 @@ public class ChessMatch {
         ChessPiece p = (ChessPiece) board.removePiece(target);
         p.decreaseMoveCount();
         board.placePiece(p, source);
-        if (capturedPiece != null) {
-            board.placePiece(capturedPiece, target);
-            piecesOnBoard.add(capturedPiece);
-            piecesCaptured.remove(capturedPiece);
-        }
 
         // Desfazendo o Mov. de Castling
         //  (Kingside rook)
@@ -170,6 +197,31 @@ public class ChessMatch {
             ChessPiece rook = (ChessPiece) board.removePiece(targetR);
             board.placePiece(rook, sourceR);
             rook.decreaseMoveCount();
+        }
+
+        // Mov. En Passant
+        //  A captura do En Passant ocorre quando o peão se move em diagonal, porém não há peça aonde ele parou
+        if (p instanceof Pawn && source.getCol() != target.getCol() && capturedPiece == enPassantVulnerable) {
+            ChessPiece pawn = (ChessPiece) capturedPiece;
+            Position pawnPosition;
+            // Se o peão que se moveu é branco, o peão que ele capturou estará abaixo dele
+            if (p.getColor() == Color.WHITE) {
+                pawnPosition = new Position(3, target.getCol());
+            }
+            // Se o peão que se moveu é preto, o peão que ele capturou estará acima dele
+            else {
+                pawnPosition = new Position(4, target.getCol());
+            }
+            board.placePiece(pawn, pawnPosition);
+            piecesOnBoard.add(pawn);
+            piecesCaptured.remove(pawn);
+            capturedPiece = null;
+        }
+
+        if (capturedPiece != null) {
+            board.placePiece(capturedPiece, target);
+            piecesOnBoard.add(capturedPiece);
+            piecesCaptured.remove(capturedPiece);
         }
     }
 
@@ -272,8 +324,8 @@ public class ChessMatch {
             }
 
             // Pawns
-            placeNewPiece(c, 7, new Pawn(board, Color.BLACK));
-            placeNewPiece(c, 2, new Pawn(board, Color.WHITE));
+            placeNewPiece(c, 7, new Pawn(board, Color.BLACK, this));
+            placeNewPiece(c, 2, new Pawn(board, Color.WHITE, this));
         }
     }
 
@@ -283,5 +335,9 @@ public class ChessMatch {
 
     public boolean isCheckMate() {
         return checkMate;
+    }
+
+    public ChessPiece getEnPassantVulnerable() {
+        return enPassantVulnerable;
     }
 }

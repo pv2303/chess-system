@@ -2,14 +2,17 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class Pawn extends ChessPiece {
 
+    private ChessMatch chessMatch;
 
-    public Pawn(Board board, Color color) {
+    public Pawn(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
+        this.chessMatch = chessMatch;
     }
 
     @Override
@@ -57,6 +60,21 @@ public class Pawn extends ChessPiece {
             if (canCapturedRight) {
                 possibleMoves[p.getRow()][p.getCol()] = true;
             }
+
+            // En Passant
+            //  Peão branco só pode executar esse movimento na linha 3
+            if (position.getRow() == 3) {
+                Position left = new Position(position.getRow(), position.getCol() - 1);
+                boolean canCaptureLeft = getBoard().positionExist(left) && isThereOpponentPiece(left) && getBoard().piece(left) == chessMatch.getEnPassantVulnerable();
+                 if (canCaptureLeft) {
+                    possibleMoves[left.getRow() - 1][ left.getCol()] = true;
+                }
+                Position right = new Position(position.getRow(), position.getCol() + 1);
+                boolean canCaptureRight = getBoard().positionExist(right) && isThereOpponentPiece(right) && getBoard().piece(right) == chessMatch.getEnPassantVulnerable();
+                if (canCaptureRight) {
+                    possibleMoves[right.getRow() - 1][ right.getCol()] = true;
+                }
+            }
         }
         else {
             // Verificando se ele pode se mover para frente
@@ -91,6 +109,21 @@ public class Pawn extends ChessPiece {
             boolean canCapturedRight = getBoard().positionExist(p) && isThereOpponentPiece(p);
             if (canCapturedRight) {
                 possibleMoves[p.getRow()][p.getCol()] = true;
+            }
+
+            // En Passant
+            //  Peão preto só pode executar esse movimento na linha 4
+            if (position.getRow() == 4) {
+                Position left = new Position(position.getRow(), position.getCol() - 1);
+                boolean canCaptureLeft = getBoard().positionExist(left) && isThereOpponentPiece(left) && getBoard().piece(left) == chessMatch.getEnPassantVulnerable();
+                if (canCaptureLeft) {
+                    possibleMoves[left.getRow() + 1][ left.getCol()] = true;
+                }
+                Position right = new Position(position.getRow(), position.getCol() + 1);
+                boolean canCaptureRight = getBoard().positionExist(right) && isThereOpponentPiece(right) && getBoard().piece(right) == chessMatch.getEnPassantVulnerable();
+                if (canCaptureRight) {
+                    possibleMoves[right.getRow() + 1][ right.getCol()] = true;
+                }
             }
         }
 
