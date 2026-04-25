@@ -5,7 +5,6 @@ import boardgame.Piece;
 import boardgame.Position;
 import chess.pieces.*;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +113,7 @@ public class ChessMatch {
             && !type.equals("N")
             && !type.equals("R")
             && !type.equals("Q")) {
-            throw new InvalidParameterException("Invalid type for promotion");
+            return promoted; // retorna a rainha se dá errado
         }
 
         Position pos = promoted.getChessPosition().toPosition();
@@ -222,7 +221,7 @@ public class ChessMatch {
         p.decreaseMoveCount();
         board.placePiece(p, source);
 
-        // Desfazendo o Mov. de Castling
+        // Desfazendo o Mov. De Castling
         //  (Kingside rook)
         if (p instanceof King && target.getCol() == source.getCol() + 2) {
             Position sourceR = new Position(source.getRow(), source.getCol() + 3);
