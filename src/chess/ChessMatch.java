@@ -5,6 +5,7 @@ import boardgame.Piece;
 import boardgame.Position;
 import chess.pieces.*;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ChessMatch {
     private boolean check;
     private boolean checkMate;
     private ChessPiece enPassantVulnerable;
+    private ChessPiece promoted;
 
     // As peças não devem ser reatribuídas
     private final List<Piece> piecesOnBoard;
@@ -83,6 +85,15 @@ public class ChessMatch {
             enPassantVulnerable = null;
         }
 
+        // Verificação de Special Move
+        promoted = null;
+        boolean promoCondWhite = movedPiece.getColor() == Color.WHITE && target.getRow() == 0;
+        boolean promoCondBlack = movedPiece.getColor() == Color.BLACK && target.getRow() == 7;
+        if (isPawn && (promoCondWhite || promoCondBlack)) {
+            promoted = (ChessPiece) board.piece(target);
+            promoted = replacePromotedPiece("Q");
+        }
+
         // Testar se a jogada gerou xeque
         check = testCheck(opponent(currentPlayer));
 
@@ -93,6 +104,37 @@ public class ChessMatch {
             nextTurn();
         }
         return (ChessPiece) capturedPiece;
+    }
+
+    public ChessPiece replacePromotedPiece(String type) {
+        if (promoted == null) {
+            throw new IllegalArgumentException("Promoted piece can't be null");
+        }
+        if (!type.equals("B")
+            && !type.equals("N")
+            && !type.equals("R")
+            && !type.equals("Q")) {
+            throw new InvalidParameterException("Invalid type for promotion");
+        }
+
+        Position pos = promoted.getChessPosition().toPosition();
+        Piece p = board.removePiece(pos);
+        piecesOnBoard.remove(p);
+
+        ChessPiece newPiece = newPiece(type, promoted.getColor());
+        board.placePiece(newPiece, pos);
+        piecesOnBoard.add(newPiece);
+
+        return newPiece;
+    }
+
+    private ChessPiece newPiece(String type, Color color) {
+        return switch (type) {
+            case "B" -> new Bishop(board, color);
+            case "N" -> new Knight(board, color);
+            case "Q" -> new Queen(board, color);
+            default -> new Rook(board, color);
+        };
     }
 
     private void validateSourcePosition(Position pos) {
@@ -339,5 +381,9 @@ public class ChessMatch {
 
     public ChessPiece getEnPassantVulnerable() {
         return enPassantVulnerable;
+    }
+
+    public ChessPiece getPromoted() {
+        return promoted;
     }
 }
